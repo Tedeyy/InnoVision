@@ -19,6 +19,8 @@ session_start();
         <input type="password" id="password" name="password" required>
         <br><br>
         <button type="submit" name="login" value="login">Login</button>
+        <br>
+        <h6>Don't have an account? <a href="userregister.php">Register here</a></h6>
     </form>
 </body>
 </html>
