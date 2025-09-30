@@ -8,8 +8,8 @@
 <body>
     <h2>What kind of user are you?</h2>
     <form>
-        <button type="submit" formaction="regbuyer.php">Buyer</button>
-        <button type="submit" formaction="regseller.php">Seller</button>
+        <button type="submit" formaction="buyer/q1.php">Buyer</button>
+        <button type="submit" formaction="seller/q1.php">Seller</button>
     </form>
 </body>
 </html>
