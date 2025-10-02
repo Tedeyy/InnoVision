@@ -15,31 +15,47 @@ session_start();
         <form action="req.php" method="post">
             <h2>Details</h2>
             First Name<br>
-            <input type="text" name="firstname" required>
+            <input type="text" name="firstname" value="<?php echo htmlspecialchars($_SESSION['firstname']); ?>" readonly>
             <br><br>
             Middle Name<br>
-            <input type="text" name="middlename" required>
+            <input type="text" name="middlename" value="<?php echo htmlspecialchars($_SESSION['middlename']); ?>" readonly>
             <br><br>
             Last Name<br>
-            <input type="text" name="lastname" required>
+            <input type="text" name="lastname" value="<?php echo htmlspecialchars($_SESSION['lastname']); ?>" readonly>
             <br><br>
             Birthdate<br>
-            <input type="date" name="bdate" required>
+            <input type="date" name="bdate" value="<?php echo htmlspecialchars($_SESSION['bdate']); ?>" readonly>
             <br><br>
             Contact Number<br>
-            <input type="text" name="contact" required>
+            <input type="text" name="contact" value="<?php echo htmlspecialchars($_SESSION['contact']); ?>" readonly>
             <br><br>
             Email Address<br>
-            <input type="text" name="email" required>
+            <input type="text" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
             <br><br>
             RSBSA Number<br>
-            <input type="text" name="rsbsanum" required>
+            <input type="text" name="rsbsanum" value="<?php echo htmlspecialchars($_SESSION['rsbsanum']); ?>" readonly>
             <br><br>
             Valid ID<br>
-            <input type="image" src="/icons/upload_icon.png" alt="Upload" width="100" height="100" name="img" required>
+            <?php
+                if (!empty($_SESSION['valid_id_path'])) {
+                    echo "<img src='" . $_SESSION['valid_id_path'] . "' width='200'>";
+                } else {
+                    echo "No image uploaded.";
+                }
+                ?>
             <br><br>
             Valid ID Number<br>
-            <input type="text" name="idnum" required>
+            <input type="text" name="idnum" value="<?php echo htmlspecialchars($_SESSION['idnum']); ?>" readonly>
+            <br><br>
+            <br><br>
+            <div id="acc">Login Credentials<br>
+                Username<br>
+                <input type="text" name="username" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
+                <br><br>
+                Password<br>
+                <input type="text" name="password" value="<?php echo htmlspecialchars($_SESSION['password']); ?>" readonly>
+                <br>
+            </div>
             <br><br>
             <button type="submit" name="proceed" value="proceed">Proceed</button>
             <br>
@@ -51,21 +67,7 @@ session_start();
 <?php
     if (isset($_POST["proceed"])){
 
-            $_SESSION["firstname"] = $_POST["firstname"];
-            $_SESSION["middlename"] = $_POST["middlename"];
-            $_SESSION["lastname"] = $_POST["lastname"];
-            $_SESSION["bdate"] = $_POST["bdate"];
-            $_SESSION["contact"] = $_POST["contact"];
-            $_SESSION["email"] = $_POST["email"];
-            $_SESSION["rsbsanum"] = $_POST["rsbsanum"];
-            $_SESSION["idnum"] = $_POST["idnum"];
-            
-
-
-            //Testing
-            //echo $_SESSION["firstname"] . "<br>";
-            //echo $_SESSION["middlename"] . "<br>";
-            //echo $_SESSION["lastname"] . "<br>";
+        
 
     }
 ?>

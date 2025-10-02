@@ -12,7 +12,7 @@ session_start();
 </head>
 <body>
     <div name="regform">
-        <form action="req.php" method="post">
+        <form action="req.php" method="post" enctype="multipart/form-data">
             <h2>Details</h2>
             First Name<br>
             <input type="text" name="firstname" required>
@@ -36,10 +36,20 @@ session_start();
             <input type="text" name="rsbsanum" required>
             <br><br>
             Valid ID<br>
-            <input type="image" src="/icons/upload_icon.png" alt="Upload" width="100" height="100" name="img" required>
+            <input type="file" name="valid_id" accept="image/*" required>
             <br><br>
             Valid ID Number<br>
             <input type="text" name="idnum" required>
+            <br><br>
+            <br><br>
+            <div id="acc">Login Credentials<br>
+                Username<br>
+                <input type="text" name="username" required>
+                <br><br>
+                Password<br>
+                <input type="password" name="password" required>
+                <br>
+            </div>
             <br><br>
             <button type="submit" name="next" value="next">Proceed</button>
             <br>
@@ -59,7 +69,20 @@ session_start();
             $_SESSION["email"] = $_POST["email"];
             $_SESSION["rsbsanum"] = $_POST["rsbsanum"];
             $_SESSION["idnum"] = $_POST["idnum"];
-            
+            $_SESSION["username"] = $_POST["username"];
+            $_SESSION["password"] = $_POST["password"];
+
+            if (isset($_FILES['valid_id']) && $_FILES['valid_id']['error'] == UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/upload/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                $ext = pathinfo($_FILES['valid_id']['name'], PATHINFO_EXTENSION);
+                $filename = uniqid('validid_', true) . '.' . $ext;
+                $targetFile = $uploadDir . $filename;
+                move_uploaded_file($_FILES['valid_id']['tmp_name'], $targetFile);
+                $_SESSION['valid_id_path'] = 'upload/' . $filename;
+            }
 
             header("Location: conreq.php");
     }
