@@ -37,10 +37,19 @@ session_start();
             <br><br>
             Valid ID<br>
             <?php
-                if (!empty($_SESSION['valid_id_path'])) {
-                    echo "<img src='" . $_SESSION['valid_id_path'] . "' width='200'>";
+                if (!empty($_SESSION['docs_path'])) {
+                    echo "<div style='margin: 10px 0;'>";
+                    echo "<img src='" . $_SESSION['docs_path'] . "' width='300' height='200' style='border: 1px solid #ddd; border-radius: 5px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>";
+                    echo "<br><small style='color: #666;'>Uploaded file: " . basename($_SESSION['docs_path']) . "</small>";
+                    echo "</div>";
                 } else {
-                    echo "No image uploaded.";
+                    echo "<div style='color: #999; font-style: italic;'>No image uploaded.</div>";
+                }
+                
+                // Show upload error if any
+                if (!empty($_SESSION['upload_error'])) {
+                    echo "<div style='color: red; font-size: 12px; margin-top: 5px;'>" . htmlspecialchars($_SESSION['upload_error']) . "</div>";
+                    unset($_SESSION['upload_error']);
                 }
                 ?>
             <br><br>
@@ -66,20 +75,43 @@ session_start();
 
 <?php
     if (isset($_POST["proceed"])){
-
+        require_once '../../../config/RegistrationHandler.php';
+        
+        $registrationHandler = new RegistrationHandler();
+        
+        // Check if username already exists
+        if ($registrationHandler->usernameExists($_SESSION['username'])) {
+            echo "<script>alert('Username already exists. Please choose a different username.'); window.history.back();</script>";
+            exit;
+        }
+        
+        // Check if email already exists
+        if ($registrationHandler->emailExists($_SESSION['email'])) {
+            echo "<script>alert('Email already exists. Please use a different email.'); window.history.back();</script>";
+            exit;
+        }
+        
         $data = [
-        'user_fname' => $_SESSION['firstname'],
-        'user_mname' => $_SESSION['middlename'],
-        'user_lname' => $_SESSION['lastname'],
-        'bdate' => $_SESSION['bdate'],
-        'contact' => $_SESSION['contact'],
-        'email' => $_SESSION['email'],
-        'rsbsanum' => $_SESSION['rsbsanum'],
-        'idnum' => $_SESSION['idnum'],
-        'username' => $_SESSION['username'],
-        'password' => $_SESSION['password']
+            'user_fname' => $_SESSION['firstname'],
+            'user_mname' => $_SESSION['middlename'],
+            'user_lname' => $_SESSION['lastname'],
+            'bdate' => $_SESSION['bdate'],
+            'contact' => $_SESSION['contact'],
+            'email' => $_SESSION['email'],
+            'rsbsanum' => $_SESSION['rsbsanum'],
+            'idnum' => $_SESSION['idnum'],
+            'username' => $_SESSION['username'],
+            'password' => $_SESSION['password'],
+            'docs_path' => $_SESSION['docs_path'] ?? ''
         ];
 
-        
+        // Register seller in database
+        if ($registrationHandler->registerSeller($data)) {
+            echo "<script>alert('Registration successful! You can now login.'); window.location.href='../login.php';</script>";
+            // Clear session data
+            session_destroy();
+        } else {
+            echo "<script>alert('Registration failed. Please try again.'); window.history.back();</script>";
+        }
     }
 ?>

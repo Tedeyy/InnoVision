@@ -6,7 +6,7 @@
 
 class Database {
     private $host = 'localhost';
-    private $db_name = 'InnoVision';
+    private $db_name = 'innovisionv1';
     private $username = 'root';
     private $password = '';
     private $charset = 'utf8mb4';

@@ -31,11 +31,11 @@ if ($connection) {
             echo "</ul>";
         }
         
-        // Test UserManager
-        echo "<h3>Testing UserManager:</h3>";
-        require_once 'config/UserManager.php';
-        $userManager = new UserManager();
-        echo "<p style='color: green;'>✅ UserManager class loaded successfully!</p>";
+        // Test RegistrationHandler
+        echo "<h3>Testing RegistrationHandler:</h3>";
+        require_once 'config/RegistrationHandler.php';
+        $registrationHandler = new RegistrationHandler();
+        echo "<p style='color: green;'>✅ RegistrationHandler class loaded successfully!</p>";
         
     } catch (PDOException $e) {
         echo "<p style='color: red;'>❌ Error checking tables: " . $e->getMessage() . "</p>";

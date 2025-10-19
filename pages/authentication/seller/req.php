@@ -77,11 +77,23 @@ session_start();
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
+                
+                // Get file extension
                 $ext = pathinfo($_FILES['valid_id']['name'], PATHINFO_EXTENSION);
-                $filename = uniqid('validid_', true) . '.' . $ext;
+                
+                // Create filename as firstname_lastname_docs
+                $firstname = strtolower(trim($_POST['firstname']));
+                $lastname = strtolower(trim($_POST['lastname']));
+                $filename = $firstname . '_' . $lastname . '_docs.' . $ext;
+                
                 $targetFile = $uploadDir . $filename;
-                move_uploaded_file($_FILES['valid_id']['tmp_name'], $targetFile);
-                $_SESSION['valid_id_path'] = 'upload/' . $filename;
+                
+                // Move uploaded file
+                if (move_uploaded_file($_FILES['valid_id']['tmp_name'], $targetFile)) {
+                    $_SESSION['docs_path'] = 'upload/' . $filename;
+                } else {
+                    $_SESSION['upload_error'] = 'Failed to upload image. Please try again.';
+                }
             }
 
             header("Location: conreq.php");
