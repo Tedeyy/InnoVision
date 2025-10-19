@@ -17,10 +17,21 @@ class RegistrationHandler {
      */
     public function registerSeller($userData) {
         try {
+            // Check if database connection exists
+            if (!$this->conn) {
+                echo "Database connection failed!<br>";
+                return false;
+            }
+            
+            echo "Database connection successful!<br>";
+            echo "Table name: " . $this->table_name . "<br>";
+            
             $query = "INSERT INTO " . $this->table_name . " 
                      (user_fname, user_mname, user_lname, bdate, contact, email, rsbsanum, idnum, username, password, docs_path) 
                      VALUES (:user_fname, :user_mname, :user_lname, :bdate, :contact, :email, :rsbsanum, :idnum, :username, :password, :docs_path)";
 
+            echo "SQL Query: " . $query . "<br>";
+            
             $stmt = $this->conn->prepare($query);
 
             // Hash the password for security
@@ -38,9 +49,17 @@ class RegistrationHandler {
             $stmt->bindParam(':password', $hashedPassword);
             $stmt->bindParam(':docs_path', $userData['docs_path']);
 
-            return $stmt->execute();
+            $result = $stmt->execute();
+            echo "Execute result: " . ($result ? "SUCCESS" : "FAILED") . "<br>";
+            
+            if (!$result) {
+                echo "PDO Error Info: <pre>" . print_r($stmt->errorInfo(), true) . "</pre>";
+            }
+            
+            return $result;
         } catch(PDOException $exception) {
-            echo "Error registering seller: " . $exception->getMessage();
+            echo "Error registering seller: " . $exception->getMessage() . "<br>";
+            echo "Error Code: " . $exception->getCode() . "<br>";
             return false;
         }
     }

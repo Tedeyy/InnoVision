@@ -12,7 +12,7 @@ session_start();
 </head>
 <body>
    <div name="regform">
-        <form action="req.php" method="post">
+        <form action="conreq.php" method="post">
             <h2>Details</h2>
             First Name<br>
             <input type="text" name="firstname" value="<?php echo htmlspecialchars($_SESSION['firstname']); ?>" readonly>
@@ -75,6 +75,11 @@ session_start();
 
 <?php
     if (isset($_POST["proceed"])){
+        echo "<div style='background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;'>";
+        echo "<h3>Debug Information:</h3>";
+        echo "Form submitted successfully!<br>";
+        echo "Session data: <pre>" . print_r($_SESSION, true) . "</pre>";
+        
         require_once '../../../config/RegistrationHandler.php';
         
         $registrationHandler = new RegistrationHandler();
@@ -104,14 +109,20 @@ session_start();
             'password' => $_SESSION['password'],
             'docs_path' => $_SESSION['docs_path'] ?? ''
         ];
+        
+        echo "Data to be inserted: <pre>" . print_r($data, true) . "</pre>";
 
         // Register seller in database
-        if ($registrationHandler->registerSeller($data)) {
+        $result = $registrationHandler->registerSeller($data);
+        echo "Registration result: " . ($result ? "SUCCESS" : "FAILED") . "<br>";
+        
+        if ($result) {
             echo "<script>alert('Registration successful! You can now login.'); window.location.href='../login.php';</script>";
             // Clear session data
             session_destroy();
         } else {
             echo "<script>alert('Registration failed. Please try again.'); window.history.back();</script>";
         }
+        echo "</div>";
     }
 ?>
