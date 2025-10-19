@@ -11,7 +11,7 @@ session_start();
     <link rel="stylesheet" href="req.css">
 </head>
 <body>
-    <div name="regform">
+    <div class="regform">
         <form action="req.php" method="post" enctype="multipart/form-data">
             <h2>Buyer Registration Details</h2>
             First Name<br>
