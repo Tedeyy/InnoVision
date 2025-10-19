@@ -8,12 +8,14 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Registration Form</title>
-    <link rel="stylesheet" href="req.css">
+    <?php $cssVersion = @filemtime(__DIR__ . '/req.css') ?: time(); ?>
+    <link rel="stylesheet" href="req.css?v=<?=$cssVersion?>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="regform">
         <form action="req.php" method="post" enctype="multipart/form-data">
-            <h2>Details</h2>
+            <h2>Seller Registration Details</h2>
             First Name<br>
             <input type="text" name="firstname" required>
             <br><br>

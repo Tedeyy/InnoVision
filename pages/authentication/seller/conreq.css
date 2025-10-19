@@ -11,11 +11,14 @@ body {
     min-height: 100vh;
     padding: 20px;
     color: #2d3748;
+    margin: 0;
 }
 
 .regform {
     background: rgba(255, 255, 255, 0.95);
+    background: #ffffff;
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: 3rem;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -47,6 +50,97 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     position: relative;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f7fafc;
+    color: #2d3748;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Image Preview Styles */
+.image-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.uploaded-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e2e8f0;
+    object-fit: cover;
+}
+
+.file-info {
+    margin-top: 0.5rem;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.no-image {
+    color: #a0aec0;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+    background: #f7fafc;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e0;
+}
+
+.error-message {
+    color: #e53e3e;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #fed7d7;
+    border-radius: 8px;
+    border: 1px solid #feb2b2;
+}
+
+#acc {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
+}
+
+#acc h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .regform h2::after {

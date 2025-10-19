@@ -49,6 +49,68 @@ body {
     position: relative;
 }
 
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    color: #2d3748;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group input[type="file"] {
+    padding: 0.75rem;
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    cursor: pointer;
+}
+
+.form-group input[type="file"]:hover {
+    border-color: #48bb78;
+    background: #f0fff4;
+}
+
+#acc {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 1px solid #e2e8f0;
+}
+
+#acc h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
 .regform h2::after {
     content: '';
     position: absolute;

@@ -10,65 +10,104 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Registration Confirmation</title>
     <link rel="stylesheet" href="conreq.css">
+    <style>
+        /* Fallback styles in case CSS file doesn't load */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .regform {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
    <div class="regform">
         <form action="conreq.php" method="post">
-            <h2>Details</h2>
-            First Name<br>
-            <input type="text" name="firstname" value="<?php echo htmlspecialchars($_SESSION['firstname']); ?>" readonly>
-            <br><br>
-            Middle Name<br>
-            <input type="text" name="middlename" value="<?php echo htmlspecialchars($_SESSION['middlename']); ?>" readonly>
-            <br><br>
-            Last Name<br>
-            <input type="text" name="lastname" value="<?php echo htmlspecialchars($_SESSION['lastname']); ?>" readonly>
-            <br><br>
-            Birthdate<br>
-            <input type="date" name="bdate" value="<?php echo htmlspecialchars($_SESSION['bdate']); ?>" readonly>
-            <br><br>
-            Contact Number<br>
-            <input type="text" name="contact" value="<?php echo htmlspecialchars($_SESSION['contact']); ?>" readonly>
-            <br><br>
-            Email Address<br>
-            <input type="text" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
-            <br><br>
-            RSBSA Number<br>
-            <input type="text" name="rsbsanum" value="<?php echo htmlspecialchars($_SESSION['rsbsanum']); ?>" readonly>
-            <br><br>
-            Valid ID<br>
-            <?php
-                if (!empty($_SESSION['docs_path'])) {
-                    echo "<div style='margin: 10px 0;'>";
-                    echo "<img src='" . $_SESSION['docs_path'] . "' width='300' height='200' style='border: 1px solid #ddd; border-radius: 5px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>";
-                    echo "<br><small style='color: #666;'>Uploaded file: " . basename($_SESSION['docs_path']) . "</small>";
-                    echo "</div>";
-                } else {
-                    echo "<div style='color: #999; font-style: italic;'>No image uploaded.</div>";
-                }
-                
-                // Show upload error if any
-                if (!empty($_SESSION['upload_error'])) {
-                    echo "<div style='color: red; font-size: 12px; margin-top: 5px;'>" . htmlspecialchars($_SESSION['upload_error']) . "</div>";
-                    unset($_SESSION['upload_error']);
-                }
-                ?>
-            <br><br>
-            Valid ID Number<br>
-            <input type="text" name="idnum" value="<?php echo htmlspecialchars($_SESSION['idnum']); ?>" readonly>
-            <br><br>
-            <br><br>
-            <div id="acc">Login Credentials<br>
-                Username<br>
-                <input type="text" name="username" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
-                <br><br>
-                Password<br>
-                <input type="text" name="password" value="<?php echo htmlspecialchars($_SESSION['password']); ?>" readonly>
-                <br>
+            <h2>Seller Registration Confirmation</h2>
+            
+            <div class="form-group">
+                <label for="firstname">First Name</label>
+                <input type="text" id="firstname" name="firstname" value="<?php echo htmlspecialchars($_SESSION['firstname']); ?>" readonly>
             </div>
-            <br><br>
-            <button type="submit" name="proceed" value="proceed">Proceed</button>
-            <br>
+            
+            <div class="form-group">
+                <label for="middlename">Middle Name</label>
+                <input type="text" id="middlename" name="middlename" value="<?php echo htmlspecialchars($_SESSION['middlename']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" id="lastname" name="lastname" value="<?php echo htmlspecialchars($_SESSION['lastname']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="bdate">Birthdate</label>
+                <input type="date" id="bdate" name="bdate" value="<?php echo htmlspecialchars($_SESSION['bdate']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="contact">Contact Number</label>
+                <input type="text" id="contact" name="contact" value="<?php echo htmlspecialchars($_SESSION['contact']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="rsbsanum">RSBSA Number</label>
+                <input type="text" id="rsbsanum" name="rsbsanum" value="<?php echo htmlspecialchars($_SESSION['rsbsanum']); ?>" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="valid_id">Valid ID</label>
+                <?php
+                    if (!empty($_SESSION['docs_path'])) {
+                        echo "<div class='image-preview'>";
+                        echo "<img src='" . $_SESSION['docs_path'] . "' alt='Valid ID' class='uploaded-image'>";
+                        echo "<p class='file-info'>Uploaded file: " . basename($_SESSION['docs_path']) . "</p>";
+                        echo "</div>";
+                    } else {
+                        echo "<div class='no-image'>No image uploaded.</div>";
+                    }
+                    
+                    // Show upload error if any
+                    if (!empty($_SESSION['upload_error'])) {
+                        echo "<div class='error-message'>" . htmlspecialchars($_SESSION['upload_error']) . "</div>";
+                        unset($_SESSION['upload_error']);
+                    }
+                ?>
+            </div>
+            
+            <div class="form-group">
+                <label for="idnum">Valid ID Number</label>
+                <input type="text" id="idnum" name="idnum" value="<?php echo htmlspecialchars($_SESSION['idnum']); ?>" readonly>
+            </div>
+            
+            <div id="acc">
+                <h3>Login Credentials</h3>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" name="password" value="<?php echo htmlspecialchars($_SESSION['password']); ?>" readonly>
+                </div>
+            </div>
+            
+            <button type="submit" name="proceed" value="proceed">Submit Registration</button>
         </form>
     </div>
 </body>
