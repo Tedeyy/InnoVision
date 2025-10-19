@@ -81,7 +81,7 @@ session_start();
         echo "Form submitted successfully!<br>";
         echo "Session data: <pre>" . print_r($_SESSION, true) . "</pre>";
         
-        require_once '../../../config/BuyerRegistrationHandler.php';
+        require_once dirname(__DIR__, 3) . '/config/BuyerRegistrationHandler.php';
         
         $buyerRegistrationHandler = new BuyerRegistrationHandler();
         

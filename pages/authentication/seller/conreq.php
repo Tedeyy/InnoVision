@@ -120,9 +120,9 @@ session_start();
         echo "Form submitted successfully!<br>";
         echo "Session data: <pre>" . print_r($_SESSION, true) . "</pre>";
         
-        require_once '../../../config/SellerRegistrationHandler.php';
+        require_once dirname(__DIR__, 3) . '/config/RegistrationHandler.php';
         
-        $registrationHandler = new SellerRegistrationHandler();
+        $registrationHandler = new RegistrationHandler();
         
         // Check if username already exists
         if ($registrationHandler->usernameExists($_SESSION['username'])) {
