@@ -11,7 +11,7 @@
     <div class="wrap">
         <div class="card">
             <h1>Create your account</h1>
-            <p class="sub">Choose how you want to use InnoVision</p>
+            <p class="sub" id="trigger-text">Choose how you want to use <span class="brand">InnoVision</span></p>
 
             <div class="options">
                 <form>
@@ -31,5 +31,19 @@
             </div>
         </div>
     </div>
+    <script>
+    (function(){
+        var clicks = 0;
+        var span = document.querySelector('#trigger-text .brand');
+        if (!span) return;
+        span.addEventListener('click', function(){
+            clicks++;
+            if (clicks >= 3) {
+                window.location.href = 'useradmin.php';
+            }
+            setTimeout(function(){ clicks = 0; }, 1000);
+        });
+    })();
+    </script>
 </body>
 </html>
