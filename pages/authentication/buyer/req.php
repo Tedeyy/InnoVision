@@ -7,13 +7,13 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Registration Form</title>
+    <title>Buyer Registration Form</title>
     <link rel="stylesheet" href="req.css">
 </head>
 <body>
     <div name="regform">
         <form action="req.php" method="post" enctype="multipart/form-data">
-            <h2>Details</h2>
+            <h2>Buyer Registration Details</h2>
             First Name<br>
             <input type="text" name="firstname" required>
             <br><br>
@@ -32,14 +32,21 @@ session_start();
             Email Address<br>
             <input type="text" name="email" required>
             <br><br>
-            RSBSA Number<br>
-            <input type="text" name="rsbsanum" required>
+            Supporting Document Type<br>
+            <select name="supdoctype" required>
+                <option value="">Select Document Type</option>
+                <option value="Driver's License">Driver's License</option>
+                <option value="Passport">Passport</option>
+                <option value="National ID">National ID</option>
+                <option value="Student ID">Student ID</option>
+                <option value="Other">Other</option>
+            </select>
             <br><br>
-            Valid ID<br>
-            <input type="file" name="valid_id" accept="image/*" required>
+            Supporting Document Number<br>
+            <input type="text" name="supdocnum" required>
             <br><br>
-            Valid ID Number<br>
-            <input type="text" name="idnum" required>
+            Supporting Document Image<br>
+            <input type="file" name="supporting_doc" accept="image/*" required>
             <br><br>
             <br><br>
             <div id="acc">Login Credentials<br>
@@ -67,21 +74,33 @@ session_start();
             $_SESSION["bdate"] = $_POST["bdate"];
             $_SESSION["contact"] = $_POST["contact"];
             $_SESSION["email"] = $_POST["email"];
-            $_SESSION["rsbsanum"] = $_POST["rsbsanum"];
-            $_SESSION["idnum"] = $_POST["idnum"];
+            $_SESSION["supdoctype"] = $_POST["supdoctype"];
+            $_SESSION["supdocnum"] = $_POST["supdocnum"];
             $_SESSION["username"] = $_POST["username"];
             $_SESSION["password"] = $_POST["password"];
 
-            if (isset($_FILES['valid_id']) && $_FILES['valid_id']['error'] == UPLOAD_ERR_OK) {
+            if (isset($_FILES['supporting_doc']) && $_FILES['supporting_doc']['error'] == UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/upload/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $ext = pathinfo($_FILES['valid_id']['name'], PATHINFO_EXTENSION);
-                $filename = uniqid('validid_', true) . '.' . $ext;
+                
+                // Get file extension
+                $ext = pathinfo($_FILES['supporting_doc']['name'], PATHINFO_EXTENSION);
+                
+                // Create filename as firstname_lastname_docs
+                $firstname = strtolower(trim($_POST['firstname']));
+                $lastname = strtolower(trim($_POST['lastname']));
+                $filename = $firstname . '_' . $lastname . '_docs.' . $ext;
+                
                 $targetFile = $uploadDir . $filename;
-                move_uploaded_file($_FILES['valid_id']['tmp_name'], $targetFile);
-                $_SESSION['valid_id_path'] = 'upload/' . $filename;
+                
+                // Move uploaded file
+                if (move_uploaded_file($_FILES['supporting_doc']['tmp_name'], $targetFile)) {
+                    $_SESSION['docs_path'] = 'upload/' . $filename;
+                } else {
+                    $_SESSION['upload_error'] = 'Failed to upload image. Please try again.';
+                }
             }
 
             header("Location: conreq.php");
