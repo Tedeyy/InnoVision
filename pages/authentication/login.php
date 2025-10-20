@@ -43,17 +43,23 @@ function findUser(PDO $conn, string $table, string $userCol, string $passCol, st
     return null;
 }
 
-// Role definitions: tries multiple tables for seller/buyer to support both `seller` and `reviewseller` schemas
+// Role definitions: checks all user tables for login
 $roles = [
-    'admin'  => [ ['table' => 'admin',  'userCandidates' => ['username','user','email','admin_username'],   'passCandidates' => ['password','pass','pwd','hash'], 'nameCandidates' => ['name','username','user']] ],
-    'bat'    => [ ['table' => 'bat',    'userCandidates' => ['username','user','email'],                     'passCandidates' => ['password','pass','pwd','hash'], 'nameCandidates' => ['name','username','user']] ],
+    'admin'  => [ 
+        ['table' => 'admin',        'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']],
+        ['table' => 'reviewadmin',  'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']]
+    ],
+    'bat'    => [ 
+        ['table' => 'bat',          'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']],
+        ['table' => 'reviewbat',    'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']]
+    ],
     'seller' => [
-        ['table' => 'seller',      'userCandidates' => ['username','user','email'], 'passCandidates' => ['password','pass','pwd','user_password'], 'nameCandidates' => ['user_fname','firstname','first_name','username','user']],
-        ['table' => 'reviewseller','userCandidates' => ['username'],                 'passCandidates' => ['password'],                                'nameCandidates' => ['user_fname','username']],
+        ['table' => 'seller',       'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']],
+        ['table' => 'reviewseller', 'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']]
     ],
     'buyer'  => [
-        ['table' => 'buyer',       'userCandidates' => ['username','user','email'], 'passCandidates' => ['password','pass','pwd','user_password'], 'nameCandidates' => ['user_fname','firstname','first_name','username','user']],
-        ['table' => 'reviewbuyer', 'userCandidates' => ['username'],                 'passCandidates' => ['password'],                                'nameCandidates' => ['user_fname','username']],
+        ['table' => 'buyer',        'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']],
+        ['table' => 'reviewbuyer',  'userCandidates' => ['username'], 'passCandidates' => ['password'], 'nameCandidates' => ['user_fname','username']]
     ],
 ];
 
@@ -91,16 +97,24 @@ if (isset($_POST['login'])) {
                             foreach ($cfg['nameCandidates'] as $cand) {
                                 if (isset($row[$cand]) && $row[$cand] !== '') { $displayName = $row[$cand]; break; }
                             }
-                            $_SESSION['user_id'] = $row['user_id'] ?? ($row['id'] ?? ($row['uid'] ?? null));
+                            // Handle different ID column names
+                            $userId = null;
+                            if (isset($row['user_id'])) {
+                                $userId = $row['user_id'];
+                            } elseif (isset($row['bat_id'])) {
+                                $userId = $row['bat_id'];
+                            }
+                            
+                            $_SESSION['user_id'] = $userId;
                             $_SESSION['username'] = $row[$userCol] ?? $username;
                             $_SESSION['role'] = $role;
                             $_SESSION['name'] = $displayName;
 
-                            // Redirect
+                            // Redirect to respective dashboards
                             if ($role === 'admin') { header('Location: ../adminview/dashboard.php'); exit; }
                             if ($role === 'bat')   { header('Location: ../batview/dashboard.php'); exit; }
                             if ($role === 'seller'){ header('Location: ../sellerview/dashboard.php'); exit; }
-                            if ($role === 'buyer') { header('Location: ../buyerview/dasboard.php'); exit; }
+                            if ($role === 'buyer') { header('Location: ../buyerview/dashboard.php'); exit; }
                         } else {
                             // Username matched in this table, but password invalid
                             $wrongPassword = true;

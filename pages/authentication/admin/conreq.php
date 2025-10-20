@@ -65,12 +65,14 @@ session_start();
 <?php
 if (isset($_POST['proceed'])) {
     require_once dirname(__DIR__, 3) . '/config/AdminRegistrationHandler.php';
+    require_once dirname(__DIR__, 3) . '/config/UsernameChecker.php';
     $handler = new AdminRegistrationHandler();
+    $usernameChecker = new UsernameChecker();
 
-    if ($handler->usernameExists($_SESSION['username'])) {
+    if ($usernameChecker->usernameExists($_SESSION['username'])) {
         echo "<script>alert('Username already exists.'); window.history.back();</script>"; exit;
     }
-    if ($handler->emailExists($_SESSION['email'])) {
+    if ($usernameChecker->emailExists($_SESSION['email'])) {
         echo "<script>alert('Email already exists.'); window.history.back();</script>"; exit;
     }
 

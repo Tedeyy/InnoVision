@@ -82,17 +82,19 @@ session_start();
         echo "Session data: <pre>" . print_r($_SESSION, true) . "</pre>";
         
         require_once dirname(__DIR__, 3) . '/config/BuyerRegistrationHandler.php';
+        require_once dirname(__DIR__, 3) . '/config/UsernameChecker.php';
         
         $buyerRegistrationHandler = new BuyerRegistrationHandler();
+        $usernameChecker = new UsernameChecker();
         
-        // Check if username already exists
-        if ($buyerRegistrationHandler->usernameExists($_SESSION['username'])) {
+        // Check if username already exists across all user tables
+        if ($usernameChecker->usernameExists($_SESSION['username'])) {
             echo "<script>alert('Username already exists. Please choose a different username.'); window.history.back();</script>";
             exit;
         }
         
-        // Check if email already exists
-        if ($buyerRegistrationHandler->emailExists($_SESSION['email'])) {
+        // Check if email already exists across all user tables
+        if ($usernameChecker->emailExists($_SESSION['email'])) {
             echo "<script>alert('Email already exists. Please use a different email.'); window.history.back();</script>";
             exit;
         }
