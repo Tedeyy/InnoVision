@@ -411,17 +411,14 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'create_listing') 
                         <option value="Cattle">Cattle</option>
                         <option value="Pig">Pig</option>
                         <option value="Goat">Goat</option>
-                        <option value="Sheep">Sheep</option>
-                        <option value="Chicken">Chicken</option>
-                        <option value="Duck">Duck</option>
-                        <option value="Other">Other</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="breed">Breed *</label>
-                    <input type="text" id="breed" name="breed" class="form-input" 
-                           placeholder="Enter breed (e.g., Holstein, Berkshire, Boer)" required>
+                    <select id="breed" name="breed" class="form-select" required>
+                        <option value="">Select breed</option>
+                    </select>
                 </div>
                 
                 <div class="form-row">
@@ -461,6 +458,68 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'create_listing') 
     </div>
 
     <script>
+        // Breed options for different livestock types
+        const breedOptions = {
+            'Cattle': [
+                'Holstein Friesian',
+                'Jersey',
+                'Angus',
+                'Hereford',
+                'Brahman',
+                'Simmental',
+                'Charolais',
+                'Limousin',
+                'Shorthorn',
+                'Santa Gertrudis',
+                'Other'
+            ],
+            'Pig': [
+                'Berkshire',
+                'Duroc',
+                'Hampshire',
+                'Yorkshire',
+                'Landrace',
+                'Pietrain',
+                'Tamworth',
+                'Large White',
+                'Chester White',
+                'Poland China',
+                'Other'
+            ],
+            'Goat': [
+                'Boer',
+                'Nubian',
+                'Saanen',
+                'Alpine',
+                'Toggenburg',
+                'Oberhasli',
+                'LaMancha',
+                'Nigerian Dwarf',
+                'Angora',
+                'Cashmere',
+                'Other'
+            ]
+        };
+
+        // Update breed options when livestock type changes
+        document.getElementById('livestock_type').addEventListener('change', function() {
+            const selectedType = this.value;
+            const breedSelect = document.getElementById('breed');
+            
+            // Clear existing options
+            breedSelect.innerHTML = '<option value="">Select breed</option>';
+            
+            // Add new options based on selected type
+            if (selectedType && breedOptions[selectedType]) {
+                breedOptions[selectedType].forEach(breed => {
+                    const option = document.createElement('option');
+                    option.value = breed;
+                    option.textContent = breed;
+                    breedSelect.appendChild(option);
+                });
+            }
+        });
+
         // File upload preview
         document.getElementById('docs').addEventListener('change', function(e) {
             const file = e.target.files[0];
