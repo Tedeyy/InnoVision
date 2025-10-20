@@ -21,7 +21,7 @@ session_start();
                         <span class="icon">🛡️</span>
                         Register as Admin
                     </button>
-                    <button class="opt bat" type="submit" formaction="admin/rep.php">
+                    <button class="opt bat" type="submit" formaction="bat/req.php">
                         <span class="icon">🏷️</span>
                         Register as BAT
                     </button>

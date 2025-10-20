@@ -7,13 +7,13 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Registration Form</title>
+    <title>BAT Registration Form</title>
     <link rel="stylesheet" href="req.css">
 </head>
 <body>
     <div class="regform">
         <form action="req.php" method="post" enctype="multipart/form-data">
-            <h2>Admin Registration Details</h2>
+            <h2>BAT Registration Details</h2>
             First Name<br>
             <input type="text" name="firstname" required>
             <br><br>
@@ -30,13 +30,10 @@ session_start();
             <input type="text" name="contact" required>
             <br><br>
             Email Address<br>
-            <input type="email" name="email" required>
+            <input type="text" name="email" required>
             <br><br>
-            Office<br>
-            <input type="text" name="office" required>
-            <br><br>
-            Role<br>
-            <input type="text" name="role" required>
+            Assigned Barangay<br>
+            <input type="text" name="assigned_barangay" required>
             <br><br>
             Supporting Document Type<br>
             <select name="supdoctype" required>
@@ -77,9 +74,8 @@ session_start();
             $_SESSION["bdate"] = $_POST["bdate"];
             $_SESSION["contact"] = $_POST["contact"];
             $_SESSION["email"] = $_POST["email"];
-            $_SESSION["office"] = $_POST["office"];
-            $_SESSION["role"] = $_POST["role"];
             $_SESSION["supdoctype"] = $_POST["supdoctype"];
+            $_SESSION["assigned_barangay"] = $_POST["assigned_barangay"];
             $_SESSION["username"] = $_POST["username"];
             $_SESSION["password"] = $_POST["password"];
 

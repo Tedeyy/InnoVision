@@ -64,7 +64,7 @@ session_start();
 
 <?php
 if (isset($_POST['proceed'])) {
-    require_once dirname(__DIR__, 2) . '/config/AdminRegistrationHandler.php';
+    require_once dirname(__DIR__, 3) . '/config/AdminRegistrationHandler.php';
     $handler = new AdminRegistrationHandler();
 
     if ($handler->usernameExists($_SESSION['username'])) {
@@ -98,4 +98,3 @@ if (isset($_POST['proceed'])) {
     }
 }
 ?>
-
