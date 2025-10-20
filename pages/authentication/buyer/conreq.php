@@ -33,13 +33,22 @@ session_start();
             Email Address<br>
             <input type="text" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
             <br><br>
-            Supporting Document Type<br>
-            <input type="text" name="supdoctype" value="<?php echo htmlspecialchars($_SESSION['supdoctype']); ?>" readonly>
+
+            <!-- New address fields for buyer -->
+            Address<br>
+            <input type="text" name="address" value="<?php echo htmlspecialchars($_SESSION['address'] ?? ''); ?>" readonly>
             <br><br>
-            Supporting Document Number<br>
-            <input type="text" name="supdocnum" value="<?php echo htmlspecialchars($_SESSION['supdocnum']); ?>" readonly>
+            Barangay<br>
+            <input type="text" name="barangay" value="<?php echo htmlspecialchars($_SESSION['barangay'] ?? ''); ?>" readonly>
             <br><br>
-            Supporting Document Image<br>
+            Municipality<br>
+            <input type="text" name="municipality" value="<?php echo htmlspecialchars($_SESSION['municipality'] ?? ''); ?>" readonly>
+            <br><br>
+            Province<br>
+            <input type="text" name="province" value="<?php echo htmlspecialchars($_SESSION['province'] ?? ''); ?>" readonly>
+            <br><br>
+
+            Proof of Legitimacy<br>
             <?php
                 if (!empty($_SESSION['docs_path'])) {
                     echo "<div style='margin: 10px 0;'>";
@@ -56,6 +65,12 @@ session_start();
                     unset($_SESSION['upload_error']);
                 }
                 ?>
+            <br><br>
+            Type of Document<br>
+            <input type="text" name="supdoctype" value="<?php echo htmlspecialchars($_SESSION['supdoctype']); ?>" readonly>
+            <br><br>
+            ID Number if not applicable, type N/A<br>
+            <input type="text" name="supdocnum" value="<?php echo htmlspecialchars($_SESSION['supdocnum']); ?>" readonly>
             <br><br>
             <br><br>
             <div id="acc">Login Credentials<br>
@@ -106,8 +121,12 @@ session_start();
             'bdate' => $_SESSION['bdate'],
             'contact' => $_SESSION['contact'],
             'email' => $_SESSION['email'],
-            'supdoctype' => $_SESSION['supdoctype'],
-            'supdocnum' => $_SESSION['supdocnum'],
+            'supdoctype' => $_SESSION['supdoctype'] ?? '',
+            'supdocnum' => $_SESSION['supdocnum'] ?? '',
+            'address' => $_SESSION['address'] ?? '',
+            'barangay' => $_SESSION['barangay'] ?? '',
+            'municipality' => $_SESSION['municipality'] ?? '',
+            'province' => $_SESSION['province'] ?? '',
             'username' => $_SESSION['username'],
             'password' => $_SESSION['password'],
             'docs_path' => $_SESSION['docs_path'] ?? ''

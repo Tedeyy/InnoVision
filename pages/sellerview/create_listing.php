@@ -8,7 +8,7 @@ if (empty($_SESSION['role']) || $_SESSION['role'] !== 'seller') {
 // Include database configuration
 require_once '../../config/database.php';
 
-// Get user information
+// Get user information (from session)
 $user_id = $_SESSION['user_id'];
 $user_fname = $_SESSION['user_fname'] ?? '';
 $user_lname = $_SESSION['user_lname'] ?? '';
@@ -44,38 +44,79 @@ $error_message = '';
 
 if ($_POST && isset($_POST['action']) && $_POST['action'] === 'create_listing') {
     try {
+        // Prefer seller_id from session; accept hidden field for convenience but validate it
+        $posted_seller_id = isset($_POST['seller_id']) ? (int)$_POST['seller_id'] : 0;
+        $seller_id = $posted_seller_id ?: $user_id;
+        if ($seller_id !== (int)$user_id) {
+            throw new Exception('Seller ID mismatch. Action not allowed.');
+        }
+
         $livestock_type = $_POST['livestock_type'] ?? '';
         $breed = $_POST['breed'] ?? '';
         $age = (int)($_POST['age'] ?? 0);
         $weight = (float)($_POST['weight'] ?? 0);
         $price = (float)($_POST['price'] ?? 0);
-        
-        // Handle file upload
+
+        // New address fields
+        $address = trim($_POST['address'] ?? '');
+        $barangay = trim($_POST['barangay'] ?? '');
+        $municipality = trim($_POST['municipality'] ?? '');
+        $province = trim($_POST['province'] ?? '');
+
+        // Ensure seller is verified (exists in seller table) before inserting
+        $checkSeller = $conn->prepare("SELECT user_id FROM seller WHERE user_id = ?");
+        $checkSeller->execute([$seller_id]);
+        if (!$checkSeller->fetch()) {
+            throw new Exception('Only verified sellers can create listings. Your account is still pending verification.');
+        }
+
+        // Start transaction
+        $conn->beginTransaction();
+
+        // Insert record without docs_path first
+        $stmt = $conn->prepare("INSERT INTO reviewlivestocklisting (seller_id, livestock_type, breed, address, barangay, municipality, province, age, weight, price, docs_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$seller_id, $livestock_type, $breed, $address, $barangay, $municipality, $province, $age, $weight, $price, '']);
+
+        // Get the new listing id
+        $listing_id = (int)$conn->lastInsertId();
+
+        // Handle file upload (optional) and name by seller lastname_firstname_listingid
         $docs_path = '';
         if (isset($_FILES['docs']) && $_FILES['docs']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = '../../pages/authentication/seller/upload/';
+            // Absolute upload directory (pages/authentication/seller/upload/)
+            $upload_dir = __DIR__ . '/../authentication/seller/upload/';
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
-            
-            $file_extension = pathinfo($_FILES['docs']['name'], PATHINFO_EXTENSION);
-            $filename = $user_fname . '_' . $user_lname . '_docs_' . time() . '.' . $file_extension;
-            $docs_path = $upload_dir . $filename;
-            
-            if (move_uploaded_file($_FILES['docs']['tmp_name'], $docs_path)) {
+
+            $originalName = $_FILES['docs']['name'];
+            $file_extension = pathinfo($originalName, PATHINFO_EXTENSION);
+            $clean_lname = preg_replace('/[^a-z0-9_-]/', '_', strtolower($user_lname ?: 'seller'));
+            $clean_fname = preg_replace('/[^a-z0-9_-]/', '_', strtolower($user_fname ?: 'user'));
+            $filename = sprintf('%s_%s_%d.%s', $clean_lname, $clean_fname, $listing_id, $file_extension);
+            $targetPath = $upload_dir . $filename;
+
+            if (move_uploaded_file($_FILES['docs']['tmp_name'], $targetPath)) {
+                // Use a web-accessible relative path consistent with existing codebase
                 $docs_path = 'pages/authentication/seller/upload/' . $filename;
+
+                // Update the record with docs_path
+                $update = $conn->prepare("UPDATE reviewlivestocklisting SET docs_path = ? WHERE listing_id = ?");
+                $update->execute([$docs_path, $listing_id]);
             } else {
-                throw new Exception('Failed to upload file');
+                throw new Exception('Failed to move uploaded file.');
             }
         }
-        
-        // Insert into reviewlivestocklisting table
-        $stmt = $conn->prepare("INSERT INTO reviewlivestocklisting (seller_id, livestock_type, breed, age, weight, price, docs_path) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$user_id, $livestock_type, $breed, $age, $weight, $price, $docs_path]);
-        
+
+        // Commit transaction
+        $conn->commit();
+
         $success_message = 'Listing created successfully! It will be reviewed by administrators before being published.';
-        
+
     } catch (Exception $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
         $error_message = 'Error creating listing: ' . $e->getMessage();
     }
 }
@@ -403,7 +444,9 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'create_listing') 
         <div class="card">
             <form method="POST" action="" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="create_listing">
-                
+                <!-- ensure seller_id travels with the form (validated on server) -->
+                <input type="hidden" name="seller_id" value="<?php echo htmlspecialchars($user_id); ?>">
+
                 <div class="form-group">
                     <label class="form-label" for="livestock_type">Livestock Type *</label>
                     <select id="livestock_type" name="livestock_type" class="form-select" required>
@@ -441,7 +484,32 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'create_listing') 
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Documentation (Optional)</label>
+                    <label class="form-label" for="address">Address *</label>
+                    <input type="text" id="address" name="address" class="form-input" 
+                           placeholder="Enter your address" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="barangay">Barangay *</label>
+                        <input type="text" id="barangay" name="barangay" class="form-input" 
+                               placeholder="Enter barangay" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="municipality">Municipality *</label>
+                        <input type="text" id="municipality" name="municipality" class="form-input" 
+                               placeholder="Enter municipality" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="province">Province *</label>
+                    <input type="text" id="province" name="province" class="form-input" 
+                           placeholder="Enter province" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="docs">Documentation (Optional)</label>
                     <div class="file-upload" onclick="document.getElementById('docs').click()">
                         <input type="file" id="docs" name="docs" accept="image/*,.pdf">
                         <div class="file-upload-text">Click to upload photos or documents</div>
