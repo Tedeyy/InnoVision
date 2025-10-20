@@ -14,35 +14,18 @@ $buyer_lname = $_SESSION['user_lname'] ?? '';
 $db = new Database();
 $conn = $db->getConnection();
 
-// Handle Interested action
-$flash_success = '';
-$flash_error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'mark_interested') {
-    try {
-        $listing_id = (int)($_POST['listing_id'] ?? 0);
-        if (!$conn || !$listing_id || !$buyer_id) { throw new Exception('Invalid data'); }
-
-        // Optional: avoid duplicate interest
-        $check = $conn->prepare('SELECT interest_id FROM listinginterest WHERE listing_id = ? AND buyer_id = ?');
-        $check->execute([$listing_id, $buyer_id]);
-        if (!$check->fetch()) {
-            $ins = $conn->prepare('INSERT INTO listinginterest (listing_id, buyer_id, message) VALUES (?, ?, ?)');
-            $ins->execute([$listing_id, $buyer_id, 'Interested']);
-        }
-        $flash_success = 'Marked as Interested.';
-    } catch (Throwable $e) {
-        $flash_error = 'Failed to mark interest.';
-    }
-}
-
-// Fetch verified listings for feed (exclude sold)
-$listings = [];
+$interests = [];
 if ($conn) {
     try {
-        $stmt = $conn->query("SELECT listing_id, seller_id, livestock_type, breed, age, weight, price, created, docs_path FROM livestocklisting ORDER BY created DESC");
-        $listings = $stmt->fetchAll();
+        $stmt = $conn->prepare("SELECT li.listing_id, l.seller_id, l.livestock_type, l.breed, l.age, l.weight, l.price, l.created, l.docs_path
+                                 FROM listinginterest li
+                                 JOIN livestocklisting l ON l.listing_id = li.listing_id
+                                 WHERE li.buyer_id = ?
+                                 ORDER BY li.created DESC");
+        $stmt->execute([$buyer_id]);
+        $interests = $stmt->fetchAll();
     } catch (Throwable $e) {
-        $listings = [];
+        $interests = [];
     }
 }
 ?>
@@ -51,7 +34,7 @@ if ($conn) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buyer Dashboard</title>
+    <title>Interested Listings</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *{box-sizing:border-box}
@@ -75,9 +58,6 @@ if ($conn) {
         .media{width:100%;max-height:360px;object-fit:cover;background:#f7fafc}
         .card-body{padding:12px 16px}
         .meta{color:#4a5568;font-size:.9rem}
-        .actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #e2e8f0}
-        .btn{background:#d69e2e;color:#fff;border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
-        .btn-secondary{background:#4a5568;color:#fff;border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
     </style>
     </head>
 <body>
@@ -86,8 +66,8 @@ if ($conn) {
             <a class="brand" href="dashboard.php">InnoVision</a>
             <div class="search"><input type="text" placeholder="Search livestock..." disabled></div>
             <div class="links">
-                <a class="active" href="dashboard.php">Feed</a>
-                <a href="interested.php">Interested</a>
+                <a href="dashboard.php">Feed</a>
+                <a class="active" href="interested.php">Interested</a>
                 <a href="chat.php">Chat</a>
             </div>
             <div class="user">
@@ -98,13 +78,10 @@ if ($conn) {
     </nav>
 
     <div class="container">
-        <?php if ($flash_success): ?><div class="card" style="padding:12px 16px;color:#065f46;background:#d1fae5;border-color:#a7f3d0;"><?php echo htmlspecialchars($flash_success); ?></div><?php endif; ?>
-        <?php if ($flash_error): ?><div class="card" style="padding:12px 16px;color:#991b1b;background:#fee2e2;border-color:#fecaca;"><?php echo htmlspecialchars($flash_error); ?></div><?php endif; ?>
-
+        <h2 style="margin:8px 0 16px 0;">Your Interested Listings</h2>
         <div class="feed">
-            <?php foreach ($listings as $l): ?>
+            <?php foreach ($interests as $l): ?>
             <?php
-                // Resolve image path relative to buyer view
                 $img = $l['docs_path'] ?? '';
                 if ($img && !preg_match('/^https?:\/\//', $img)) {
                     if (str_starts_with($img, 'pages/')) { $img = '../' . substr($img, 6); } else { $img = '../' . ltrim($img, '/'); }
@@ -125,23 +102,14 @@ if ($conn) {
                     <div style="font-size:1.25rem;font-weight:800;">₱<?php echo number_format($l['price'], 2); ?></div>
                     <div class="meta">Posted on <?php echo date('M j, Y', strtotime($l['created'])); ?></div>
                 </div>
-                <div class="actions">
-                    <form method="POST" action="" style="margin:0;">
-                        <input type="hidden" name="action" value="mark_interested">
-                        <input type="hidden" name="listing_id" value="<?php echo htmlspecialchars($l['listing_id']); ?>">
-                        <button type="submit" class="btn">Interested</button>
-                    </form>
-                    <a class="btn-secondary" href="#">Contact Seller</a>
-                </div>
             </div>
             <?php endforeach; ?>
 
-            <?php if (empty($listings)): ?>
-                <div class="card" style="padding:16px;text-align:center;color:#6b7280;">No listings yet. Please check back later.</div>
+            <?php if (empty($interests)): ?>
+                <div class="card" style="padding:16px;text-align:center;color:#6b7280;">No interests yet. Mark listings as Interested from your feed.</div>
             <?php endif; ?>
         </div>
     </div>
 </body>
 </html>
-
 
