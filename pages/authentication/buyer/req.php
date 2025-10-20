@@ -32,6 +32,21 @@ session_start();
             Email Address<br>
             <input type="text" name="email" required>
             <br><br>
+
+            <!-- New address fields for buyer -->
+            Address<br>
+            <input type="text" name="address" required>
+            <br><br>
+            Barangay<br>
+            <input type="text" name="barangay" required>
+            <br><br>
+            Municipality<br>
+            <input type="text" name="municipality" required>
+            <br><br>
+            Province<br>
+            <input type="text" name="province" required>
+            <br><br>
+
             Supporting Document Type<br>
             <select name="supdoctype" required>
                 <option value="">Select Document Type</option>
@@ -78,6 +93,12 @@ session_start();
             $_SESSION["supdocnum"] = $_POST["supdocnum"];
             $_SESSION["username"] = $_POST["username"];
             $_SESSION["password"] = $_POST["password"];
+
+            // New session fields for address
+            $_SESSION["address"] = $_POST["address"];
+            $_SESSION["barangay"] = $_POST["barangay"];
+            $_SESSION["municipality"] = $_POST["municipality"];
+            $_SESSION["province"] = $_POST["province"];
 
             if (isset($_FILES['supporting_doc']) && $_FILES['supporting_doc']['error'] == UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/upload/';
