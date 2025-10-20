@@ -33,6 +33,21 @@ session_start();
             Email Address<br>
             <input type="text" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" readonly>
             <br><br>
+
+            <!-- New address fields for buyer -->
+            Address<br>
+            <input type="text" name="address" value="<?php echo htmlspecialchars($_SESSION['address'] ?? ''); ?>" readonly>
+            <br><br>
+            Barangay<br>
+            <input type="text" name="barangay" value="<?php echo htmlspecialchars($_SESSION['barangay'] ?? ''); ?>" readonly>
+            <br><br>
+            Municipality<br>
+            <input type="text" name="municipality" value="<?php echo htmlspecialchars($_SESSION['municipality'] ?? ''); ?>" readonly>
+            <br><br>
+            Province<br>
+            <input type="text" name="province" value="<?php echo htmlspecialchars($_SESSION['province'] ?? ''); ?>" readonly>
+            <br><br>
+
             Supporting Document Type<br>
             <input type="text" name="supdoctype" value="<?php echo htmlspecialchars($_SESSION['supdoctype']); ?>" readonly>
             <br><br>
@@ -106,8 +121,12 @@ session_start();
             'bdate' => $_SESSION['bdate'],
             'contact' => $_SESSION['contact'],
             'email' => $_SESSION['email'],
-            'supdoctype' => $_SESSION['supdoctype'],
-            'supdocnum' => $_SESSION['supdocnum'],
+            'supdoctype' => $_SESSION['supdoctype'] ?? '',
+            'supdocnum' => $_SESSION['supdocnum'] ?? '',
+            'address' => $_SESSION['address'] ?? '',
+            'barangay' => $_SESSION['barangay'] ?? '',
+            'municipality' => $_SESSION['municipality'] ?? '',
+            'province' => $_SESSION['province'] ?? '',
             'username' => $_SESSION['username'],
             'password' => $_SESSION['password'],
             'docs_path' => $_SESSION['docs_path'] ?? ''

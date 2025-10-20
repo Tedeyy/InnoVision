@@ -37,6 +37,21 @@ session_start();
             RSBSA Number<br>
             <input type="text" name="rsbsanum" required>
             <br><br>
+
+            <!-- New address fields -->
+            Address<br>
+            <input type="text" name="address" required>
+            <br><br>
+            Barangay<br>
+            <input type="text" name="barangay" required>
+            <br><br>
+            Municipality<br>
+            <input type="text" name="municipality" required>
+            <br><br>
+            Province<br>
+            <input type="text" name="province" required>
+            <br><br>
+
             Valid ID<br>
             <input type="file" name="valid_id" accept="image/*" required>
             <br><br>
@@ -73,6 +88,12 @@ session_start();
             $_SESSION["idnum"] = $_POST["idnum"];
             $_SESSION["username"] = $_POST["username"];
             $_SESSION["password"] = $_POST["password"];
+
+            // New session fields for address
+            $_SESSION["address"] = $_POST["address"];
+            $_SESSION["barangay"] = $_POST["barangay"];
+            $_SESSION["municipality"] = $_POST["municipality"];
+            $_SESSION["province"] = $_POST["province"];
 
             if (isset($_FILES['valid_id']) && $_FILES['valid_id']['error'] == UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/upload/';

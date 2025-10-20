@@ -69,6 +69,27 @@ session_start();
                 <label for="rsbsanum">RSBSA Number</label>
                 <input type="text" id="rsbsanum" name="rsbsanum" value="<?php echo htmlspecialchars($_SESSION['rsbsanum']); ?>" readonly>
             </div>
+
+            <!-- New address fields display -->
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($_SESSION['address'] ?? ''); ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="barangay">Barangay</label>
+                <input type="text" id="barangay" name="barangay" value="<?php echo htmlspecialchars($_SESSION['barangay'] ?? ''); ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="municipality">Municipality</label>
+                <input type="text" id="municipality" name="municipality" value="<?php echo htmlspecialchars($_SESSION['municipality'] ?? ''); ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="province">Province</label>
+                <input type="text" id="province" name="province" value="<?php echo htmlspecialchars($_SESSION['province'] ?? ''); ?>" readonly>
+            </div>
             
             <div class="form-group">
                 <label for="valid_id">Valid ID</label>
@@ -147,6 +168,10 @@ session_start();
             'email' => $_SESSION['email'],
             'rsbsanum' => $_SESSION['rsbsanum'],
             'idnum' => $_SESSION['idnum'],
+            'address' => $_SESSION['address'] ?? '',
+            'barangay' => $_SESSION['barangay'] ?? '',
+            'municipality' => $_SESSION['municipality'] ?? '',
+            'province' => $_SESSION['province'] ?? '',
             'username' => $_SESSION['username'],
             'password' => $_SESSION['password'],
             'docs_path' => $_SESSION['docs_path'] ?? ''
