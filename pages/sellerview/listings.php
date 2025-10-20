@@ -77,7 +77,7 @@ if ($conn) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Dashboard</title>
+    <title>My Listings - Seller Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -129,7 +129,8 @@ if ($conn) {
             transition: color 0.2s;
         }
         
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: #d69e2e;
         }
         
@@ -188,18 +189,18 @@ if ($conn) {
             padding: 2rem;
         }
         
-        .dashboard-header {
+        .page-header {
             margin-bottom: 2rem;
         }
         
-        .dashboard-title {
+        .page-title {
             font-size: 2rem;
             font-weight: 700;
             color: #2d3748;
             margin-bottom: 0.5rem;
         }
         
-        .dashboard-subtitle {
+        .page-subtitle {
             color: #4a5568;
             font-size: 1.125rem;
         }
@@ -216,6 +217,7 @@ if ($conn) {
         .create-listing-section {
             text-align: center;
             padding: 2rem;
+            margin-bottom: 2rem;
         }
         
         .create-listing-btn {
@@ -290,6 +292,34 @@ if ($conn) {
             font-style: italic;
         }
         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
@@ -312,6 +342,10 @@ if ($conn) {
             .listings-table {
                 font-size: 0.875rem;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -320,7 +354,7 @@ if ($conn) {
         <div class="nav-container">
             <a href="dashboard.php" class="nav-brand">InnoVision</a>
             <ul class="nav-links">
-                <li><a href="listings.php">Listings</a></li>
+                <li><a href="listings.php" class="active">Listings</a></li>
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="chat.php">Chat</a></li>
             </ul>
@@ -337,9 +371,49 @@ if ($conn) {
     </nav>
 
     <div class="container">
-        <div class="dashboard-header">
-            <h1 class="dashboard-title">Seller Dashboard</h1>
-            <p class="dashboard-subtitle">Manage your livestock listings and track your sales</p>
+        <div class="page-header">
+            <h1 class="page-title">My Listings</h1>
+            <p class="page-subtitle">Manage and track all your livestock listings</p>
+        </div>
+
+        <?php
+        // Calculate statistics
+        $under_review_count = 0;
+        $verified_count = 0;
+        $sold_count = 0;
+        
+        foreach ($listings as $listing) {
+            switch ($listing['status']) {
+                case 'Under Review':
+                    $under_review_count++;
+                    break;
+                case 'Verified':
+                    $verified_count++;
+                    break;
+                case 'Sold':
+                    $sold_count++;
+                    break;
+            }
+        }
+        ?>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $under_review_count; ?></div>
+                <div class="stat-label">Under Review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $verified_count; ?></div>
+                <div class="stat-label">Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $sold_count; ?></div>
+                <div class="stat-label">Sold</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo count($listings); ?></div>
+                <div class="stat-label">Total Listings</div>
+            </div>
         </div>
 
         <div class="card create-listing-section">
@@ -349,7 +423,7 @@ if ($conn) {
         </div>
 
         <div class="card listings-section">
-            <h3>Your Listings</h3>
+            <h3>All Listings</h3>
             <?php if (empty($listings)): ?>
                 <div class="no-listings">
                     <p>You haven't created any listings yet. <a href="create_listing.php">Create your first listing</a> to get started!</p>
@@ -392,5 +466,3 @@ if ($conn) {
     </div>
 </body>
 </html>
-
-
